@@ -119,6 +119,7 @@ namespace Obfuscar
 			return true;
 		}
 
+        // method visibility not match return true
 		static public bool CheckMemberVisibility (string attribute, string typeAttribute, MethodAttributes methodAttributes, TypeDefinition declaringType)
 		{
 			if (!string.IsNullOrEmpty (typeAttribute)) {
@@ -137,7 +138,15 @@ namespace Obfuscar
 				} else if (string.Equals (attribute, "protected", StringComparison.CurrentCultureIgnoreCase)) {
 					if (!(accessmask == MethodAttributes.Public || accessmask == MethodAttributes.Family || accessmask == MethodAttributes.FamORAssem))
 						return true;
-				} else
+				}
+                else if (string.Equals(attribute, "private", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    if (accessmask != MethodAttributes.Private)
+                    {
+                        return true;
+                    }
+                }
+                else
 					throw new ObfuscarException (string.Format ("'{0}' is not valid for the 'attrib' value of skip elements. Only 'public' and 'protected' are supported by now.", attribute));
 				
 				// attrib value given, but the member is not public/protected. We signal that the Skip* rule should be ignored. The member is obfuscated in any case.

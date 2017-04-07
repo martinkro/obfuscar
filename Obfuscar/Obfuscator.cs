@@ -337,8 +337,13 @@ namespace Obfuscar
 
 			// skip filtered fields
 			string skip;
-			if (info.ShouldSkip (fieldKey, Project.InheritMap, Project.Settings.KeepPublicApi, Project.Settings.HidePrivateApi,
-					Project.Settings.MarkedOnly, out skip)) {
+			if (info.ShouldSkip (fieldKey, 
+                    Project.InheritMap, 
+                    Project.Settings.KeepPublicApi, 
+                    Project.Settings.HidePrivateApi,
+					Project.Settings.MarkedOnly, 
+                    out skip,
+                    Project.Settings.ForcedOnly)) {
 				Mapping.UpdateField (fieldKey, ObfuscationStatus.Skipped, skip);
 				nameGroup.Add (fieldKey.Name);
 				return;
@@ -392,7 +397,13 @@ namespace Obfuscar
 
 					string skip;
 					// rename the class parameters
-					if (info.ShouldSkip (new TypeKey (type), Project.InheritMap, Project.Settings.KeepPublicApi, Project.Settings.HidePrivateApi, Project.Settings.MarkedOnly, out skip))
+					if (info.ShouldSkip (new TypeKey (type), 
+                            Project.InheritMap, 
+                            Project.Settings.KeepPublicApi, 
+                            Project.Settings.HidePrivateApi, 
+                            Project.Settings.MarkedOnly, 
+                            out skip,
+                            Project.Settings.ForcedOnly))
 						continue;
 
 					int index = 0;
@@ -406,7 +417,13 @@ namespace Obfuscar
 		{
 			MethodKey methodkey = new MethodKey (method);
 			string skip;
-			if (info.ShouldSkipParams (methodkey, Project.InheritMap, Project.Settings.KeepPublicApi, Project.Settings.HidePrivateApi, Project.Settings.MarkedOnly, out skip))
+			if (info.ShouldSkipParams (methodkey, 
+                    Project.InheritMap, 
+                    Project.Settings.KeepPublicApi, 
+                    Project.Settings.HidePrivateApi, 
+                    Project.Settings.MarkedOnly, 
+                    out skip,
+                    Project.Settings.ForcedOnly))
 				return;
 
 			foreach (ParameterDefinition param in method.Parameters)
@@ -452,7 +469,13 @@ namespace Obfuscar
 					string fullName = type.FullName;
 
 					string skip;
-					if (info.ShouldSkip (unrenamedTypeKey, Project.InheritMap, Project.Settings.KeepPublicApi, Project.Settings.HidePrivateApi, Project.Settings.MarkedOnly, out skip)) {
+					if (info.ShouldSkip (unrenamedTypeKey, 
+                            Project.InheritMap, 
+                            Project.Settings.KeepPublicApi, 
+                            Project.Settings.HidePrivateApi, 
+                            Project.Settings.MarkedOnly, 
+                            out skip,
+                            Project.Settings.ForcedOnly)) {
 						Mapping.UpdateType (oldTypeKey, ObfuscationStatus.Skipped, skip);
 
 						// go through the list of resources, remove ones that would be renamed
@@ -720,8 +743,14 @@ namespace Obfuscar
 
 			string skip;
 			// skip filtered props
-			if (info.ShouldSkip (propKey, Project.InheritMap, Project.Settings.KeepPublicApi, Project.Settings.HidePrivateApi,
-					Project.Settings.MarkedOnly, out skip)) {
+			if (info.ShouldSkip (propKey, 
+                    Project.InheritMap, 
+                    Project.Settings.KeepPublicApi, 
+                    Project.Settings.HidePrivateApi,
+					Project.Settings.MarkedOnly, 
+                    out skip,
+                    Project.Settings.ForcedOnly
+                    )) {
 				m.Update (ObfuscationStatus.Skipped, skip);
 
 				// make sure get/set get skipped too
@@ -813,8 +842,14 @@ namespace Obfuscar
 
 			string skip;
 			// skip filtered events
-			if (info.ShouldSkip (evtKey, Project.InheritMap, Project.Settings.KeepPublicApi, Project.Settings.HidePrivateApi,
-					Project.Settings.MarkedOnly, out skip)) {
+			if (info.ShouldSkip (evtKey, 
+                    Project.InheritMap, 
+                    Project.Settings.KeepPublicApi, 
+                    Project.Settings.HidePrivateApi,
+					Project.Settings.MarkedOnly, 
+                    out skip,
+                    Project.Settings.ForcedOnly
+                    )) {
 				m.Update (ObfuscationStatus.Skipped, skip);
 
 				// make sure add/remove get skipped too
@@ -918,8 +953,13 @@ namespace Obfuscar
 
 			// skip filtered methods
 			string skiprename;
-			var toDo = info.ShouldSkip (methodKey, Project.InheritMap, Project.Settings.KeepPublicApi,
-						   Project.Settings.HidePrivateApi, Project.Settings.MarkedOnly, out skiprename);
+			var toDo = info.ShouldSkip (methodKey, 
+                           Project.InheritMap, 
+                           Project.Settings.KeepPublicApi,
+						   Project.Settings.HidePrivateApi, 
+                           Project.Settings.MarkedOnly, 
+                           out skiprename,
+                           Project.Settings.ForcedOnly);
 			if (!toDo)
 				skiprename = null;
 			// update status for skipped non-virtual methods immediately...status for
@@ -939,7 +979,11 @@ namespace Obfuscar
 			}
 		}
 
-		private void RenameVirtualMethod (Dictionary<TypeKey, Dictionary<ParamSig, NameGroup>> baseSigNames, MethodKey methodKey, MethodDefinition method, string skipRename)
+		private void RenameVirtualMethod (
+            Dictionary<TypeKey, Dictionary<ParamSig, NameGroup>> baseSigNames, 
+            MethodKey methodKey, 
+            MethodDefinition method, 
+            string skipRename)
 		{
 			// if method is in a group, look for group key
 			MethodGroup group = Project.InheritMap.GetMethodGroup (methodKey);

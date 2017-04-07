@@ -38,3 +38,5 @@ T4MVC.cs
 
 *.iml
 .idea/
+doc/*.pdf
+testdata/

@@ -647,7 +647,14 @@ namespace Obfuscar
 			return false;
 		}
 
-		public bool ShouldSkip (TypeKey type, InheritMap map, bool keepPublicApi, bool hidePrivateApi, bool markedOnly, out string message)
+		public bool ShouldSkip (TypeKey type, 
+            InheritMap map, 
+            bool keepPublicApi, 
+            bool hidePrivateApi, 
+            bool markedOnly, 
+            out string message,
+            bool forcedOnly=false
+            )
 		{
 			var attribute = type.TypeDefinition.MarkedToRename ();
 			if (attribute != null) {
@@ -655,7 +662,7 @@ namespace Obfuscar
 				return !attribute.Value;
 			}
 
-			if (markedOnly) {
+			if ((!forcedOnly) && markedOnly) {
 				message = "MarkedOnly option in configuration";
 				return true;
 			}
@@ -669,6 +676,12 @@ namespace Obfuscar
 				message = "namespace rule in configuration";
 				return false;
 			}
+
+            if (forcedOnly)
+            {
+                message = "ForcedOnly option in configuration";
+                return true;
+            }
 
 			if (skipTypes.IsMatch (type, map)) {
 				message = "type rule in configuration";
@@ -694,7 +707,14 @@ namespace Obfuscar
 			return !hidePrivateApi;
 		}
 
-		public bool ShouldSkip (MethodKey method, InheritMap map, bool keepPublicApi, bool hidePrivateApi, bool markedOnly, out string message)
+        public bool ShouldSkip(MethodKey method,
+            InheritMap map,
+            bool keepPublicApi,
+            bool hidePrivateApi,
+            bool markedOnly,
+            out string message,
+            bool forcedOnly = false
+            )
 		{
 			if (method.Method.IsRuntime) {
 				message = "runtime method";
@@ -717,10 +737,17 @@ namespace Obfuscar
 				}
 			}
 
-			return ShouldSkipParams (method, map, keepPublicApi, hidePrivateApi, markedOnly, out message);
+			return ShouldSkipParams (method, map, keepPublicApi, hidePrivateApi, markedOnly, out message,forcedOnly);
 		}
 
-		public bool ShouldSkipParams (MethodKey method, InheritMap map, bool keepPublicApi, bool hidePrivateApi, bool markedOnly, out string message)
+		public bool ShouldSkipParams (MethodKey method, 
+            InheritMap map, 
+            bool keepPublicApi, 
+            bool hidePrivateApi, 
+            bool markedOnly, 
+            out string message,
+            bool forcedOnly=false
+            )
 		{
 			var attribute = method.Method.MarkedToRename ();
 			// skip runtime methods
@@ -735,7 +762,7 @@ namespace Obfuscar
 				return !parent.Value;
 			}
 
-			if (markedOnly) {
+			if ((!forcedOnly) && markedOnly) {
 				message = "MarkedOnly option in configuration";
 				return true;
 			}
@@ -749,6 +776,12 @@ namespace Obfuscar
 				message = "method rule in configuration";
 				return false;
 			}
+
+            if (forcedOnly)
+            {
+                message = "ForcedOnly option in configuration";
+                return true;
+            }
 
 			if (ShouldSkip (method.TypeKey, TypeAffectFlags.AffectMethod, map)) {
 				message = "type rule in configuration";
@@ -789,7 +822,14 @@ namespace Obfuscar
 			return !projectHideStrings;
 		}
 
-		public bool ShouldSkip (FieldKey field, InheritMap map, bool keepPublicApi, bool hidePrivateApi, bool markedOnly, out string message)
+		public bool ShouldSkip (FieldKey field, 
+            InheritMap map, 
+            bool keepPublicApi, 
+            bool hidePrivateApi, 
+            bool markedOnly, 
+            out string message,
+            bool forcedOnly=false
+            )
 		{
 			// skip runtime methods
 			if ((field.Field.IsRuntimeSpecialName && field.Field.Name == "value__")) {
@@ -809,7 +849,7 @@ namespace Obfuscar
 				return !parent.Value;
 			}
 
-			if (markedOnly) {
+			if ((!forcedOnly) && markedOnly) {
 				message = "MarkedOnly option in configuration";
 				return true;
 			}
@@ -823,6 +863,12 @@ namespace Obfuscar
 				message = "field rule in configuration";
 				return false;
 			}
+
+            if (forcedOnly)
+            {
+                message = "ForcedOnly option in configuration";
+                return true;
+            }
 
 			if (ShouldSkip (field.TypeKey, TypeAffectFlags.AffectField, map)) {
 				message = "type rule in configuration";
@@ -848,7 +894,14 @@ namespace Obfuscar
 			return !hidePrivateApi;
 		}
 
-		public bool ShouldSkip (PropertyKey prop, InheritMap map, bool keepPublicApi, bool hidePrivateApi, bool markedOnly, out string message)
+		public bool ShouldSkip (PropertyKey prop, 
+            InheritMap map, 
+            bool keepPublicApi, 
+            bool hidePrivateApi, 
+            bool markedOnly, 
+            out string message,
+            bool forcedOnly=false
+            )
 		{
 			if (prop.Property.IsRuntimeSpecialName) {
 				message = "runtime special name";
@@ -867,7 +920,7 @@ namespace Obfuscar
 				return !parent.Value;
 			}
 
-			if (markedOnly) {
+			if ((!forcedOnly) && markedOnly) {
 				message = "MarkedOnly option in configuration";
 				return true;
 			}
@@ -881,6 +934,12 @@ namespace Obfuscar
 				message = "property rule in configuration";
 				return false;
 			}
+
+            if (forcedOnly)
+            {
+                message = "ForcedOnly option in configuration";
+                return true;
+            }
 
 			if (ShouldSkip (prop.TypeKey, TypeAffectFlags.AffectProperty, map)) {
 				message = "type rule in configuration";
@@ -901,7 +960,14 @@ namespace Obfuscar
 			return !hidePrivateApi;
 		}
 
-		public bool ShouldSkip (EventKey evt, InheritMap map, bool keepPublicApi, bool hidePrivateApi, bool markedOnly, out string message)
+		public bool ShouldSkip (EventKey evt, 
+            InheritMap map, 
+            bool keepPublicApi, 
+            bool hidePrivateApi, 
+            bool markedOnly,
+            out string message,
+            bool forcedOnly = false
+            )
 		{
 			// skip runtime special events
 			if (evt.Event.IsRuntimeSpecialName) {
@@ -922,7 +988,7 @@ namespace Obfuscar
 				return !parent.Value;
 			}
 
-			if (markedOnly) {
+			if ((!forcedOnly) && markedOnly) {
 				message = "MarkedOnly option in configuration";
 				return true;
 			}
@@ -936,6 +1002,12 @@ namespace Obfuscar
 				message = "event rule in configuration";
 				return false;
 			}
+
+            if (forcedOnly)
+            {
+                message = "ForcedOnly option in configuration";
+                return true;
+            }
 
 			if (ShouldSkip (evt.TypeKey, TypeAffectFlags.AffectEvent, map)) {
 				message = "type rule in configuration";
